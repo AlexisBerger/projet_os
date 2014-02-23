@@ -5,6 +5,7 @@
 
 void _asm_default_int(void);
 void _asm_exc_GP(void);
+void _asm_exc_PF(void);
 void _asm_irq_0(void);
 void _asm_irq_1(void);
 void _asm_syscalls(void);
@@ -38,6 +39,7 @@ void init_idt(void)
 
 	/* Les vecteurs 0 -> 31 sont reserves pour les exceptions */
 	init_idt_desc(0x08, (u32) _asm_exc_GP, INTGATE, &kidt[13]);	/* #GP */
+	init_idt_desc(0x08, (u32) _asm_exc_PF, INTGATE, &kidt[14]);	/* #PF */
 
 	init_idt_desc(0x08, (u32) _asm_irq_0, INTGATE, &kidt[32]);	/* horloge */
 	init_idt_desc(0x08, (u32) _asm_irq_1, INTGATE, &kidt[33]);	/* clavier */

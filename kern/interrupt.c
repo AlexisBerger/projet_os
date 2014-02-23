@@ -14,6 +14,23 @@ void isr_GP_exc(void)
 	while (1);
 }
 
+void isr_PF_exc(void)
+{
+	u32 faulting_addr;
+	u32 eip;
+
+	asm(" 	movl 60(%%ebp), %%eax; \
+    		mov %%eax, %0;         \
+		mov %%cr2, %%eax;      \
+		mov %%eax, %1": "=m"(eip), "=m"(faulting_addr): );
+
+	print("#Page Fault\n");
+	dump((uchar *) &faulting_addr, 4);
+	dump((uchar *) &eip, 4);
+
+	asm("hlt");
+}
+
 void isr_clock_int(void)
 {
 	static int tic = 0;
@@ -40,8 +57,6 @@ void isr_kbd_int(void)
 
 	i = inb(0x60);
 	i--;
-
-	//// putcar('\n'); dump(&i, 1); putcar(' ');
 
 	if (i < 0x80) {		/* touche enfoncee */
 		switch (i) {

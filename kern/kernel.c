@@ -5,6 +5,7 @@
 #include "idt.h"
 #include "lib.h"
 #include "acsii_art.h"
+#include "mm.h"
 
 void init_pic(void);
 
@@ -17,31 +18,36 @@ void _start(void)
 	kattr = 0x0E;
 	scrollup(25);
 
+
+	/* Initialisation de la GDT et des segments */
+	init_gdt();
+	print("kernel : gdt loaded\n");
+
+	/* Initialisation du pointeur de pile %esp */
+	asm("	movw $0x18, %ax \n \
+		movw %ax, %ss \n \
+		movl $0x20000, %esp");
+
 	init_idt();
 	print("kernel : idt loaded\n");
 
 	init_pic();
 	print("kernel : pic configured\n");
 
-	/* Initialisation de la GDT et des segments */
-	init_gdt();
-	print("kernel : gdt loaded\n");
-	
+
 	/* Initialisation du TSS */
 	asm("	movw $0x38, %ax \n \
 		ltr %ax");
 	print("kernel : tr loaded\n");
 
-	/* Initialisation du pointeur de pile %esp */
-	asm("	movw $0x18, %ax \n \
-		movw %ax, %ss \n \
-		movl $0x20000, %esp");
+	init_mm();
+	print("kernel : paging enabled\n");
+
 /*
 	sti; //active les interruption sti != cli 
-	kattr = 0x47;
+	//kattr = 0x47;
 	print("kernel : allowing interrupt\n");
-*/
-
+//*/
 
 	main();
 }
@@ -67,16 +73,18 @@ void task1(void)
 
 int main(void)
 {
-	
+
 	kattr = 0x07;
+
 	/*
 	acsii_art_wds();
 	show_cursor();
-	*/
+	//*/
 	hide_cursor();
-	
+
 	/* Copie de la fonction a son adresse */
-	memcpy((char*) 0x30000, &task1, 100);	//copie de 100 instructions en 0x30000 de task1 
+	//*
+	memcpy((char*) 0x30000, &task1, 100);	//copie de 100 instructions en 0x30000 de task1
 	
 	kattr = 0x47;
 	print("Passage en mode utilisateur (ring3 mode)\n");
@@ -95,7 +103,7 @@ int main(void)
 		movw $0x2B, %%ax \n \
 		movw %%ax, %%ds \n \
 		iret": "=m"(default_tss.esp0):);
-
+	//*/
 	/* Jamais atteint ! */
 	print("Erreur Critique, Arret du systeme\n");
 	asm("hlt");

@@ -1,5 +1,5 @@
-extern isr_default_int, isr_GP_exc, isr_clock_int, isr_kbd_int, do_syscalls 
-global _asm_default_int, _asm_exc_GP, _asm_irq_0, _asm_irq_1, _asm_syscalls 
+extern isr_default_int, isr_GP_exc, isr_PF_exc, isr_clock_int, isr_kbd_int, do_syscalls
+global _asm_default_int, _asm_exc_GP, _asm_exc_PF, _asm_irq_0, _asm_irq_1, _asm_syscalls
 
 %macro	SAVE_REGS 0
 	pushad 
@@ -32,6 +32,13 @@ _asm_default_int:
 _asm_exc_GP:
 	SAVE_REGS
 	call isr_GP_exc
+	RESTORE_REGS
+	add esp,4
+	iret
+
+_asm_exc_PF:
+	SAVE_REGS
+	call isr_PF_exc
 	RESTORE_REGS
 	add esp,4
 	iret
