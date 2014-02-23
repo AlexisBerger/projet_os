@@ -66,7 +66,27 @@ int main(void)
 	/* Copie de la fonction a son adresse */
 	memcpy((char*) 0x30000, &task1, 100);	//copie de 100 instructions en 0x30000 de task1 
 	
+	kattr = 0x47;
+	print("Passage en mode utilisateur (ring3 mode)\n");
+	kattr = 0x07;
+	asm("   cli \n \
+		push $0x33 \n \
+		push $0x30000 \n \
+		pushfl \n \
+		popl %%eax \n \
+		orl $0x200, %%eax \n \
+		and $0xFFFFBFFF, %%eax \n \
+		push %%eax \n \
+		push $0x23 \n \
+		push $0x0 \n \
+		movl $0x20000, %0 \n \
+		movw $0x2B, %%ax \n \
+		movw %%ax, %%ds \n \
+		iret": "=m"(default_tss.esp0):);
 
+	/* Jamais atteint ! */
+	print("Erreur Critique, Arret du systeme\n");
+	asm("hlt");
 	while (1);
 }
 
