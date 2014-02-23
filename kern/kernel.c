@@ -46,9 +46,21 @@ void _start(void)
 	main();
 }
 
-void task1()
+void task1(void)
 {
 	//print("Execution task1 !!!");
+	
+	char *msg = (char*) 0x100; /* le message sera stocké en 0x30100 */
+	msg[0] = 't';
+	msg[1] = 'a';
+	msg[2] = 's';
+	msg[3] = 'k';
+	msg[4] = '1';
+	msg[5] = '\n';
+	msg[6] = 0;
+
+       asm("mov %0, %%ebx; mov $0x01, %%eax; int $0x30" :: "m" (msg));
+
 	while(1);	
 	return;
 }

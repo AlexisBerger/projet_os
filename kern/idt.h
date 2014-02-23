@@ -1,4 +1,4 @@
-/* idt.h */
+/* idt.h */	
 
 #define IDTBASE  0x800		/* addr. physique ou doit resider la IDT */
 #define IDTSIZE  0xFF		/* nombre max. de descripteurs dans la table */
