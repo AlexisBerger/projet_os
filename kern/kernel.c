@@ -48,7 +48,7 @@ void _start(void)
 
 void task1()
 {
-	print("Execution task1 !!!");
+	//print("Execution task1 !!!");
 	while(1);	
 	return;
 }
@@ -87,7 +87,7 @@ int main(void)
 	/* Jamais atteint ! */
 	print("Erreur Critique, Arret du systeme\n");
 	asm("hlt");
-	while (1);
+	//while (1);
 }
 
 
