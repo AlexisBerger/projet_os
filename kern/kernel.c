@@ -108,6 +108,7 @@ int main(void)
 	print("Erreur Critique, Arret du systeme\n");
 	asm("hlt");
 	//while (1);
+	return 0;
 }
 
 

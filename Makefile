@@ -1,14 +1,19 @@
-OBJ=/dev/fd0
+OBJ=debug
 
 all: $(OBJ) 
 
-/dev/fd0: bootsect kernel
-	cat ./boot/bootsect ./kern/kernel /dev/zero | dd of=/dev/fd0 bs=512 count=2880
+debug: bootsect kernel
+	cat ./boot/bootsect ./kern/kernel /dev/zero | dd of=./debug/debug.img bs=512 count=2880
 
 bootsect: 
 	make -C boot
 
 kernel: 
 	make -C kern
+	
+clean:
+	rm -rf kern/*.o
 
-
+floppy: bootsect kernel
+	cat ./boot/bootsect ./kern/kernel /dev/zero | dd of=/dev/fd0 bs=512 count=2880
+	 
